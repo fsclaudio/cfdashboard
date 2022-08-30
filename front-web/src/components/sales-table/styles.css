@@ -20,6 +20,14 @@
   font-size: 16px;
 }
 
+.sales-table thead th:first-of-type {
+  padding-left: 30px;
+}
+
+.sales-table thead td:first-of-type {
+  padding-left: 30px;
+}
+
 .sales-table tbody td {
   height: 55px;
   border-top: 1px solid var(--grey-ligth-125-color);

@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FilterData, Sale, SalesResponse } from '../../types';
+import { formatDate, formatGender, formatPrice } from '../../utils/formatters';
+import { buildFilterParams, makeRequest } from '../../utils/request';
 import './styles.css';
 
-function SalesTable() {
+type Props = {
+  filterData?: FilterData;
+};
+
+const extraParams = {
+  page: 0,
+  size: 12,
+  sort: 'date,desc'
+};
+
+function SalesTable({ filterData }: Props) {
+  //const [filterData, setFilterData] = useState<FilterData>();
+  const [sales, setSales] = useState<Sale[]>([]);
+  const params = useMemo(() => buildFilterParams(filterData, extraParams), [filterData]);
+  useEffect(() => {
+    makeRequest
+      .get<SalesResponse>(`/sales`, { params })
+      .then((response) => {
+        setSales(response.data.content);
+      })
+      .catch(() => {
+        console.log('erro to fetch salse by sales');
+      });
+  }, [params]);
   return (
     <div className="sales-table-container base-card">
       <h3 className="sales-table-title">Vendas Recentes</h3>
@@ -18,42 +44,17 @@ function SalesTable() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>#341</td>
-            <td>07/12/2022</td>
-            <td>Feminino</td>
-            <td>Roupas Intimas</td>
-            <td>Uberlandia</td>
-            <td>Credito</td>
-            <td>R$ 545.000,00</td>
-          </tr>
-          <tr>
-            <td>#341</td>
-            <td>07/12/2022</td>
-            <td>Feminino</td>
-            <td>Roupas Intimas</td>
-            <td>Uberlandia</td>
-            <td>Credito</td>
-            <td>R$ 545.000,00</td>
-          </tr>
-          <tr>
-            <td>#341</td>
-            <td>07/12/2022</td>
-            <td>Feminino</td>
-            <td>Roupas Intimas</td>
-            <td>Uberlandia</td>
-            <td>Credito</td>
-            <td>R$ 545.000,00</td>
-          </tr>
-          <tr>
-            <td>#341</td>
-            <td>07/12/2022</td>
-            <td>Feminino</td>
-            <td>Roupas Intimas</td>
-            <td>Uberlandia</td>
-            <td>Credito</td>
-            <td>R$ 545.000,00</td>
-          </tr>
+          {sales.map((sale) => (
+            <tr key={sale.id}>
+              <td>#{sale.id}</td>
+              <td>{formatDate(sale.date)}</td>
+              <td>{formatGender(sale.gender)}</td>
+              <td>{sale.categoryName}</td>
+              <td>{sale.storeNome}</td>
+              <td>{sale.paymentMethod}</td>
+              <td>{formatPrice(sale.total)}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

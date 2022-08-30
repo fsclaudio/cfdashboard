@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './styles.css';
 import ReactApexChart from 'react-apexcharts';
 import { buildChartSeries, chartOptions, sumSalesByDate } from './helpers';
-import { makeRequest } from '../../utils/request';
+import { buildFilterParams, makeRequest } from '../../utils/request';
 import { ChartSerieData, FilterData, SalesByDate } from '../../types';
 import { formatDate, formatPrice } from '../../utils/formatters';
 
@@ -12,9 +12,11 @@ type Props = {
 function SalesByDateComponent({ filterData }: Props) {
   const [chartSeries, setChartSeries] = useState<ChartSerieData[]>([]);
   const [totalSum, setTotalSum] = useState(0);
+
+  const params = useMemo(() => buildFilterParams(filterData), [filterData]);
   useEffect(() => {
     makeRequest
-      .get<SalesByDate[]>('/sales/by-date?minDate=2017-01-01&maxDate=2017-01-31&gender=FEMALE')
+      .get<SalesByDate[]>(`/sales/by-date`, { params })
       .then((response) => {
         const newChartSeries = buildChartSeries(response.data);
         setChartSeries(newChartSeries);
@@ -24,7 +26,7 @@ function SalesByDateComponent({ filterData }: Props) {
       .catch(() => {
         console.log('erro to fetch salse by date');
       });
-  }, []);
+  }, [params]);
   return (
     <div className="sales-by-date-container base-card">
       <div>
