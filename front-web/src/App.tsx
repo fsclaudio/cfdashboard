@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Filter from './components/filter';
 import Header from './components/header';
+import PieChartCard from './components/pie-chart-card';
 import SalesByDate from './components/sales-by-date';
 import SalesSummary from './components/sales-summary';
 
@@ -14,6 +15,16 @@ function App() {
         <SalesByDate />
         <div className="sales-overview-container">
           <SalesSummary />
+          <PieChartCard
+            name="Lojas"
+            labels={['Uberaba', 'Vaginha', 'Pouso Alegre']}
+            series={[25, 30, 45]}
+          />
+          <PieChartCard
+            name="Pagamentos"
+            labels={['Credito', 'Debito', 'Dinheiro']}
+            series={[20, 50, 30]}
+          />
         </div>
       </div>
     </>
